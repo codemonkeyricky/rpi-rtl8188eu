@@ -1,0 +1,90 @@
+diff --git a/include/autoconf.h b/include/autoconf.h
+index 1a064b9..903310e 100644
+--- a/include/autoconf.h
++++ b/include/autoconf.h
+@@ -137,7 +137,7 @@
+ #define CONFIG_P2P	1
+ #ifdef CONFIG_P2P
+ 	//The CONFIG_WFD is for supporting the Wi-Fi display
+-	//#define CONFIG_WFD	1
++	#define CONFIG_WFD	1
+ 
+ 	//Unmarked if there is low p2p scanned ratio; Kurt
+ 	//#define CONFIG_P2P_AGAINST_NOISE	1
+diff --git a/include/drv_types.h b/include/drv_types.h
+index 57892d7..34bb5db 100644
+--- a/include/drv_types.h
++++ b/include/drv_types.h
+@@ -467,7 +467,7 @@ struct _ADAPTER{
+ 	u8	init_adpt_in_progress;
+ 	u8	bHaltInProgress;
+ 	
+-	_thread_hdl_	cmdThread;
++	void    *cmdThread;
+ 	_thread_hdl_	evtThread;
+ 	_thread_hdl_	xmitThread;
+ 	_thread_hdl_	recvThread;
+diff --git a/include/osdep_service.h b/include/osdep_service.h
+index d85788c..fd9c65d 100644
+--- a/include/osdep_service.h
++++ b/include/osdep_service.h
+@@ -1388,18 +1388,12 @@ __inline static unsigned char _cancel_timer_ex(_timer *ptimer)
+ #endif
+ }
+ 
+-#ifdef PLATFORM_FREEBSD
+-static __inline void thread_enter(char *name);
+-#endif //PLATFORM_FREEBSD
+ static __inline void thread_enter(char *name)
+ {
+-#ifdef PLATFORM_LINUX
++#ifdef daemonize
+ 	daemonize("%s", name);
+-	allow_signal(SIGTERM);
+-#endif
+-#ifdef PLATFORM_FREEBSD
+-	printf("%s", "RTKTHREAD_enter");
+ #endif
++	allow_signal(SIGTERM);
+ }
+ 
+ #ifdef PLATFORM_FREEBSD
+diff --git a/os_dep/linux/os_intfs.c b/os_dep/linux/os_intfs.c
+index b614792..6c70418 100644
+--- a/os_dep/linux/os_intfs.c
++++ b/os_dep/linux/os_intfs.c
+@@ -47,6 +47,8 @@
+ #include <rtw_br_ext.h>
+ #endif //CONFIG_BR_EXT
+ 
++#include <linux/kthread.h>
++
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("Realtek Wireless Lan Driver");
+ MODULE_AUTHOR("Realtek Semiconductor Corp.");
+@@ -285,6 +287,7 @@ static int	rtw_proc_cnt = 0;
+ 
+ void rtw_proc_init_one(struct net_device *dev)
+ {
++#if 0
+ 	struct proc_dir_entry *dir_dev = NULL;
+ 	struct proc_dir_entry *entry=NULL;
+ 	_adapter	*padapter = rtw_netdev_priv(dev);
+@@ -565,7 +568,7 @@ void rtw_proc_init_one(struct net_device *dev)
+ 		return;
+ 	}
+ 	entry->write_proc = proc_set_rssi_disp;
+-
++#endif 
+ }
+ 
+ void rtw_proc_remove_one(struct net_device *dev)
+@@ -989,7 +992,7 @@ u32 rtw_start_drv_threads(_adapter *padapter)
+ 		_status = _FAIL;	
+ #endif
+ 
+-	padapter->cmdThread = kernel_thread(rtw_cmd_thread, padapter, CLONE_FS|CLONE_FILES);
++	padapter->cmdThread = kthread_run(rtw_cmd_thread, padapter, "RTW_CMD_THREAD"); 
+ 	if(padapter->cmdThread < 0)
+ 		_status = _FAIL;
+ 	else

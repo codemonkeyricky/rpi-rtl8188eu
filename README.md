@@ -1,26 +1,9 @@
-# Notice:
-This repo has been deprecated, please goto https://github.com/lwfinger/rtl8188eu
-for future updates.
 
+This repository is a fork from liwei (https://github.com/liwei/rpi-rtl8188eu), 
+with kernel 3.10.24 compatibility patches from lwfinger
+(https://github.com/lwfinger/rtl8188eu). 
 
-# rpi-rtl8188eu
+To compile, please follow the instruction from the liwei repository.
 
-Linux driver for tplink-wn725n nano wireless adapter.
-
-## compile and install
-
-1. get linux source code from github
-	- `git clone --depth 1 git://github.com/raspberrypi/linux.git rpi-linux`
-2. get fireware from github
-	- `git clone --depth 1 git://github.com/raspberrypi/firmware.git rpi-firmware`
-3. cd rpi-linux
-	- `make mrproper`
-	- `zcat /proc/config.gz > .config`
-	- `make modules_prepare`
-	- `cp /path/to/rpi-firmware/extra/Module.symvers .`
-	- `cd /path/to/rtl-8188eu`
-	- ``CONFIG_RTL8188EU=m make -C /path/to/rpi-linux M=`pwd` ``
-4. copy 8188eu.ko to ``/lib/modules/`uname -r`/kernel/drivers/net/wireless``
-5. depmod -a
-6. modprobe 8188eu
-7. ifconfig and you can see the wlan interface :-)
+This is the companion driver for the Piracast project with Wifi-display options 
+enabled. 
