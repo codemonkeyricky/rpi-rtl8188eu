@@ -137,7 +137,7 @@
 #define CONFIG_P2P	1
 #ifdef CONFIG_P2P
 	//The CONFIG_WFD is for supporting the Wi-Fi display
-	//#define CONFIG_WFD	1
+	#define CONFIG_WFD	1
 
 	//Unmarked if there is low p2p scanned ratio; Kurt
 	//#define CONFIG_P2P_AGAINST_NOISE	1

@@ -1388,18 +1388,12 @@ __inline static unsigned char _cancel_timer_ex(_timer *ptimer)
 #endif
 }
 
-#ifdef PLATFORM_FREEBSD
-static __inline void thread_enter(char *name);
-#endif //PLATFORM_FREEBSD
 static __inline void thread_enter(char *name)
 {
-#ifdef PLATFORM_LINUX
+#ifdef daemonize
 	daemonize("%s", name);
+#endif
 	allow_signal(SIGTERM);
-#endif
-#ifdef PLATFORM_FREEBSD
-	printf("%s", "RTKTHREAD_enter");
-#endif
 }
 
 #ifdef PLATFORM_FREEBSD

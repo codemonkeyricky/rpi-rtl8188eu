@@ -467,7 +467,7 @@ struct _ADAPTER{
 	u8	init_adpt_in_progress;
 	u8	bHaltInProgress;
 	
-	_thread_hdl_	cmdThread;
+	void    *cmdThread;
 	_thread_hdl_	evtThread;
 	_thread_hdl_	xmitThread;
 	_thread_hdl_	recvThread;

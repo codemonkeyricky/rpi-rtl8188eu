@@ -47,6 +47,8 @@
 #include <rtw_br_ext.h>
 #endif //CONFIG_BR_EXT
 
+#include <linux/kthread.h>
+
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Realtek Wireless Lan Driver");
 MODULE_AUTHOR("Realtek Semiconductor Corp.");
@@ -285,6 +287,7 @@ static int	rtw_proc_cnt = 0;
 
 void rtw_proc_init_one(struct net_device *dev)
 {
+#if 0
 	struct proc_dir_entry *dir_dev = NULL;
 	struct proc_dir_entry *entry=NULL;
 	_adapter	*padapter = rtw_netdev_priv(dev);
@@ -565,7 +568,7 @@ void rtw_proc_init_one(struct net_device *dev)
 		return;
 	}
 	entry->write_proc = proc_set_rssi_disp;
-
+#endif 
 }
 
 void rtw_proc_remove_one(struct net_device *dev)
@@ -989,7 +992,7 @@ u32 rtw_start_drv_threads(_adapter *padapter)
 		_status = _FAIL;	
 #endif
 
-	padapter->cmdThread = kernel_thread(rtw_cmd_thread, padapter, CLONE_FS|CLONE_FILES);
+	padapter->cmdThread = kthread_run(rtw_cmd_thread, padapter, "RTW_CMD_THREAD"); 
 	if(padapter->cmdThread < 0)
 		_status = _FAIL;
 	else
